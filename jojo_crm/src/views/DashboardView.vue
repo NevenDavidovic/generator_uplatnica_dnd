@@ -1,338 +1,411 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Sidebar -->
+  <div>
+    <!-- Mobile Sidebar -->
+    <TransitionRoot as="template" :show="sidebarOpen">
+      <Dialog class="relative z-50 lg:hidden" @close="sidebarOpen = false">
+        <!-- (TransitionChild and other mobile sidebar code remains unchanged) -->
+        <div class="fixed inset-0 flex">
+          <TransitionChild
+            as="template"
+            enter="transition ease-in-out duration-300 transform"
+            enter-from="-translate-x-full"
+            enter-to="translate-x-0"
+            leave="transition ease-in-out duration-300 transform"
+            leave-from="translate-x-0"
+            leave-to="-translate-x-full"
+          >
+            <DialogPanel class="relative mr-16 flex w-full max-w-xs flex-1">
+              <!-- Close button etc. -->
+              <div
+                class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary px-6 pb-4"
+              >
+                <div class="flex h-16 shrink-0 items-center">
+                  <img
+                    src="../assets/images/logo.png"
+                    alt="JoJo"
+                    class="w-[50px]"
+                  />
+                </div>
+                <nav class="flex flex-1 flex-col">
+                  <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                    <li>
+                      <ul role="list" class="-mx-2 space-y-1">
+                        <li v-for="item in navigation" :key="item.name">
+                          <a
+                            href="#"
+                            @click.prevent="navigate(item.name)"
+                            :class="[
+                              item.current
+                                ? 'bg-primary text-white'
+                                : 'text-indigo-200 hover:bg-[#b3e5fc] hover:text-white',
+                              'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                            ]"
+                          >
+                            <component
+                              :is="item.icon"
+                              :class="[
+                                item.current
+                                  ? 'text-white'
+                                  : 'text-indigo-200 group-hover:text-white',
+                                'size-6 shrink-0',
+                              ]"
+                              aria-hidden="true"
+                            />
+                            {{ item.name }}
+                          </a>
+                        </li>
+                      </ul>
+                    </li>
+
+                    <!-- Postavke / Settings link -->
+                    <li class="mt-auto">
+                      <a
+                        href="#"
+                        @click.prevent="navigate('Postavke')"
+                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:bg-[#b3e5fc] hover:text-white"
+                      >
+                        <Cog6ToothIcon
+                          class="size-6 shrink-0 text-indigo-200 group-hover:text-white"
+                          aria-hidden="true"
+                        />
+                        Postavke
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
+        </div>
+      </Dialog>
+    </TransitionRoot>
+
+    <!-- Desktop Sidebar -->
     <div
-      class="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 p-4"
+      class="no-print hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col"
     >
-      <div class="flex items-center gap-2 mb-8">
-        <div class="text-purple-600 text-2xl">✧</div>
-        <h1 class="text-purple-600 text-xl font-semibold">Sparkle</h1>
+      <div
+        class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary px-6 pb-4"
+      >
+        <div class="flex h-16 shrink-0 items-center">
+          <img
+            src="https://dnd-porec.hr/wp-content/uploads/2019/01/DND_logo_2019_191x196.png"
+            alt="JoJo"
+            class="w-[50px]"
+          />
+        </div>
+        <nav class="flex flex-1 flex-col">
+          <ul role="list" class="flex flex-1 flex-col gap-y-7">
+            <li>
+              <ul role="list" class="-mx-2 space-y-1">
+                <li v-for="item in navigation" :key="item.name">
+                  <a
+                    href="#"
+                    @click.prevent="navigate(item.name)"
+                    :class="[
+                      item.current
+                        ? 'hover:bg-[#b3e5fc] text-white'
+                        : 'text-indigo-200 hover:bg-[#b3e5fc] hover:text-white',
+                      'group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
+                    ]"
+                  >
+                    <component
+                      :is="item.icon"
+                      :class="[
+                        item.current
+                          ? 'text-white'
+                          : 'text-indigo-200 group-hover:text-white',
+                        'size-6 shrink-0',
+                      ]"
+                      aria-hidden="true"
+                    />
+                    {{ item.name }}
+                  </a>
+                </li>
+              </ul>
+            </li>
+
+            <!-- Postavke / Settings link -->
+            <li class="mt-auto">
+              <a
+                href="#"
+                @click.prevent="navigate('Postavke')"
+                class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-indigo-200 hover:bg-indigo-700 hover:text-white"
+              >
+                <Cog6ToothIcon
+                  class="size-6 shrink-0 text-indigo-200 group-hover:text-white"
+                  aria-hidden="true"
+                />
+                Postavke
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
-
-      <nav class="space-y-1">
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{
-            'bg-purple-50 text-purple-600': currentPage === 'dashboard',
-          }"
-        >
-          <i class="fas fa-chart-line w-5 h-5 mr-3"></i>
-          Dashboard
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{
-            'bg-purple-50 text-purple-600': currentPage === 'contacts',
-          }"
-        >
-          <i class="fas fa-address-book w-5 h-5 mr-3"></i>
-          Contacts
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{ 'bg-purple-50 text-purple-600': currentPage === 'email' }"
-        >
-          <i class="fas fa-envelope w-5 h-5 mr-3"></i>
-          Email Campaigns
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{ 'bg-purple-50 text-purple-600': currentPage === 'landing' }"
-        >
-          <i class="fas fa-laptop w-5 h-5 mr-3"></i>
-          Landing Pages
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{
-            'bg-purple-50 text-purple-600': currentPage === 'payments',
-          }"
-        >
-          <i class="fas fa-credit-card w-5 h-5 mr-3"></i>
-          Payments
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{
-            'bg-purple-50 text-purple-600': currentPage === 'documents',
-          }"
-        >
-          <i class="fas fa-file-alt w-5 h-5 mr-3"></i>
-          Documents
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{
-            'bg-purple-50 text-purple-600': currentPage === 'analytics',
-          }"
-        >
-          <i class="fas fa-chart-bar w-5 h-5 mr-3"></i>
-          Analytics
-        </a>
-
-        <a
-          href="#"
-          class="flex items-center px-4 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg group"
-          :class="{
-            'bg-purple-50 text-purple-600': currentPage === 'settings',
-          }"
-        >
-          <i class="fas fa-cog w-5 h-5 mr-3"></i>
-          Settings
-        </a>
-      </nav>
     </div>
 
-    <!-- Main Content -->
-    <div class="ml-64 p-8">
-      <!-- Header -->
-      <div class="flex justify-between items-center mb-8">
-        <div>
-          <h2 class="text-2xl font-semibold text-gray-700">
-            Hi {{ username }},
-          </h2>
-          <p class="text-gray-500">Welcome to your dashboard</p>
-        </div>
+    <!-- Main Content Area -->
+    <div class="lg:pl-72">
+      <div
+        class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8"
+      >
+        <button
+          type="button"
+          class="no-print -m-2.5 p-2.5 text-gray-700 lg:hidden"
+          @click="sidebarOpen = true"
+        >
+          <span class="sr-only">Open sidebar</span>
+          <Bars3Icon class="size-6" aria-hidden="true" />
+        </button>
 
-        <!-- User Menu -->
-        <div class="flex items-center gap-4">
-          <button class="p-2 hover:bg-gray-100 rounded-lg">
-            <i class="fas fa-bell text-gray-600"></i>
-          </button>
-          <div class="relative">
-            <img
-              src="/api/placeholder/40/40"
-              class="rounded-full cursor-pointer"
-              alt="User avatar"
+        <div class="h-6 w-px bg-gray-900/10 lg:hidden" aria-hidden="true" />
+
+        <div class="no-print flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+          <form
+            class="no-print grid flex-1 grid-cols-1"
+            action="#"
+            method="GET"
+          ></form>
+          <div class="flex items-center gap-x-4 lg:gap-x-6">
+            <button
+              type="button"
+              class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
+            >
+              <span class="sr-only">Pogledaj obavijesti</span>
+            </button>
+
+            <div
+              class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10"
+              aria-hidden="true"
             />
+
+            <!-- User Profile Dropdown -->
+            <Menu as="div" class="relative">
+              <MenuButton class="-m-1.5 no-print flex items-center p-1.5">
+                <span class="sr-only">Otvori izbornik</span>
+                <img
+                  class="size-8 rounded-full bg-gray-50"
+                  src="https://dnd-porec.hr/wp-content/uploads/2019/01/DND_logo_2019_191x196.png"
+                  alt=""
+                />
+                <span class="hidden lg:flex lg:items-center">
+                  <span
+                    class="ml-4 text-sm/6 font-semibold text-gray-900"
+                    aria-hidden="true"
+                    >{{ accountName }}</span
+                  >
+                  <ChevronDownIcon
+                    class="ml-2 size-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </span>
+              </MenuButton>
+              <transition
+                enter-active-class="transition ease-out duration-100"
+                enter-from-class="transform opacity-0 scale-95"
+                enter-to-class="transform opacity-100 scale-100"
+                leave-active-class="transition ease-in duration-75"
+                leave-from-class="transform opacity-100 scale-100"
+                leave-to-class="transform opacity-0 scale-95"
+              >
+                <MenuItems
+                  class="absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none"
+                >
+                  <MenuItem
+                    v-for="item in userNavigation"
+                    :key="item.name"
+                    v-slot="{ active }"
+                  >
+                    <a
+                      href="#"
+                      @click.prevent="navigate(item.name)"
+                      :class="[
+                        active ? 'bg-gray-50 outline-none' : '',
+                        'block px-3 py-1 text-sm/6 text-gray-900',
+                      ]"
+                      >{{ item.name }}</a
+                    >
+                  </MenuItem>
+                </MenuItems>
+              </transition>
+            </Menu>
           </div>
         </div>
       </div>
 
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-4 gap-6 mb-8">
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-gray-500">Total Contacts</div>
-            <div class="p-2 bg-purple-50 rounded-lg">
-              <i class="fas fa-users text-purple-600"></i>
-            </div>
-          </div>
-          <div class="text-2xl font-bold">3,250</div>
-          <div class="text-green-500 text-sm">+12% from last month</div>
+      <!-- Render the selected component dynamically -->
+      <main class="py-10">
+        <div class="px-4 sm:px-6 lg:px-8">
+          <component :is="currentComponent" @navigate="navigate" />
         </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-gray-500">Active Campaigns</div>
-            <div class="p-2 bg-blue-50 rounded-lg">
-              <i class="fas fa-envelope text-blue-600"></i>
-            </div>
-          </div>
-          <div class="text-2xl font-bold">12</div>
-          <div class="text-green-500 text-sm">+2 this week</div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-gray-500">Revenue</div>
-            <div class="p-2 bg-green-50 rounded-lg">
-              <i class="fas fa-dollar-sign text-green-600"></i>
-            </div>
-          </div>
-          <div class="text-2xl font-bold">$24,500</div>
-          <div class="text-green-500 text-sm">+8% from last month</div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <div class="flex items-center justify-between mb-4">
-            <div class="text-gray-500">Landing Pages</div>
-            <div class="p-2 bg-orange-50 rounded-lg">
-              <i class="fas fa-laptop text-orange-600"></i>
-            </div>
-          </div>
-          <div class="text-2xl font-bold">8</div>
-          <div class="text-green-500 text-sm">+1 this week</div>
-        </div>
-      </div>
-
-      <!-- Chart Section -->
-      <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-semibold">Performance Overview</h3>
-          <select class="border rounded-lg px-3 py-1.5 text-sm">
-            <option>Last 7 days</option>
-            <option>Last 30 days</option>
-            <option>Last 3 months</option>
-          </select>
-        </div>
-        <LineChart
-          :chart-data="chartData"
-          :options="chartOptions"
-          class="h-64"
-        />
-      </div>
-
-      <!-- Recent Activity & Campaign Performance -->
-      <div class="grid grid-cols-2 gap-6">
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="font-semibold mb-4">Recent Activity</h3>
-          <div class="space-y-4">
-            <div
-              v-for="activity in recentActivity"
-              :key="activity.id"
-              class="flex items-start gap-3"
-            >
-              <div class="p-2 rounded-full" :class="activity.iconBg">
-                <i :class="['fas', activity.icon, activity.iconColor]"></i>
-              </div>
-              <div>
-                <div class="font-medium">{{ activity.title }}</div>
-                <div class="text-sm text-gray-500">{{ activity.time }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm">
-          <h3 class="font-semibold mb-4">Campaign Performance</h3>
-          <div class="space-y-4">
-            <div
-              v-for="campaign in campaigns"
-              :key="campaign.id"
-              class="flex items-center justify-between"
-            >
-              <div>
-                <div class="font-medium">{{ campaign.name }}</div>
-                <div class="text-sm text-gray-500">{{ campaign.stats }}</div>
-              </div>
-              <div class="text-sm font-semibold" :class="campaign.statusColor">
-                {{ campaign.status }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </main>
     </div>
   </div>
 </template>
 
-<script setup>
+<script>
+import ContactsComponent from "@/components/ContactsComponent.vue";
+import SettingsComponent from "@/components/SettingsComponent.vue";
+import SinglePayment from "@/components/SinglePayment.vue";
+import OrganizationComponent from "@/components/OrganizationComponent.vue";
+import StatisticsComponent from "@/components/StatisticsComponent.vue";
+import DashboardComponent from "@/components/DashboardComponent.vue";
+import RadioniceComponent from "@/components/RadioniceComponent.vue";
+import AllSlips from "@/components/AllSlips.vue";
+import { useAuthStore } from "@/store/auth";
 import { ref } from "vue";
-import { LineChart } from "vue-chartjs";
+import { usePaymentSlipStore } from "@/store/paymentSlipStore";
+
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+  Dialog,
+  DialogPanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  TransitionChild,
+  TransitionRoot,
+} from "@headlessui/vue";
+import {
+  Bars3Icon,
+  BellIcon,
+  CalendarIcon,
+  ChartPieIcon,
+  Cog6ToothIcon,
+  DocumentDuplicateIcon,
+  FolderIcon,
+  HomeIcon,
+  UsersIcon,
+  XMarkIcon,
+} from "@heroicons/vue/24/outline";
+import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/vue/20/solid";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+export default {
+  name: "DashboardView",
+  setup() {
+    // This makes the entire component definition reactive
+    const comp = ref(ContactsComponent);
+    return { comp };
+  },
+  components: {
+    ContactsComponent,
+    SettingsComponent,
+    StatisticsComponent,
+    SinglePayment,
+    AllSlips,
+    OrganizationComponent,
+    DashboardComponent,
+    Dialog,
+    DialogPanel,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    TransitionChild,
+    TransitionRoot,
+    Bars3Icon,
+    BellIcon,
+    CalendarIcon,
+    ChartPieIcon,
+    Cog6ToothIcon,
+    DocumentDuplicateIcon,
+    FolderIcon,
+    HomeIcon,
+    UsersIcon,
+    XMarkIcon,
+    ChevronDownIcon,
+    MagnifyingGlassIcon,
+  },
+  data() {
+    return {
+      sidebarOpen: false,
 
-const username = ref("Nimi");
-const currentPage = ref("dashboard");
+      currentComponent: DashboardComponent,
+      navigation: [
+        { name: "Nadzorna ploča", href: "#", icon: HomeIcon, current: true },
+        { name: "Kontakti", href: "#", icon: UsersIcon, current: false },
+        {
+          name: "Generator Uplatnice",
+          href: "#",
+          icon: FolderIcon,
+          current: false,
+        },
+        { name: "Uplatnice", href: "#", icon: CalendarIcon, current: false },
+        {
+          name: "Radionice",
+          href: "#",
+          icon: DocumentDuplicateIcon,
+          current: false,
+        },
 
-const chartData = ref({
-  labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  datasets: [
-    {
-      label: "Page Views",
-      data: [1200, 1900, 1500, 2100, 1800, 2500, 2200],
-      borderColor: "#8b5cf6",
-      tension: 0.4,
+        { name: "Izvještaji", href: "#", icon: ChartPieIcon, current: false },
+      ],
+      userNavigation: [
+        { name: "Profil", href: "#" },
+        { name: "Odjava", href: "#" },
+      ],
+    };
+  },
+  computed: {
+    accountName() {
+      const authStore = useAuthStore();
+      return authStore.user ? authStore.user.email : "Guest";
     },
-    {
-      label: "Conversions",
-      data: [400, 650, 500, 750, 600, 850, 780],
-      borderColor: "#c4b5fd",
-      tension: 0.4,
-    },
-  ],
-});
+  },
+  methods: {
+    navigate(itemName, contact = null) {
+      switch (itemName) {
+        case "Odjava": {
+          const authStore = useAuthStore();
+          authStore.signOut();
+          this.$router.push("/signin");
+          return;
+        }
+        case "Izvještaji": {
+          this.currentComponent = StatisticsComponent;
+          break;
+        }
+        case "Uplatnice": {
+          this.currentComponent = AllSlips;
+          break;
+        }
+        case "Nadzorna ploča": {
+          this.currentComponent = DashboardComponent;
+          break;
+        }
+        case "Kontakti": {
+          this.currentComponent = ContactsComponent;
+          break;
+        }
+        case "Radionice": {
+          this.currentComponent = RadioniceComponent;
+          break;
+        }
+        case "Generator Uplatnice": {
+          // If the child passed a contact, set it in the Pinia store
+          if (contact) {
+            const slipStore = usePaymentSlipStore();
+            slipStore.setSelectedContact(contact);
+          }
+          // Immediately switch to the SinglePayment component
+          this.currentComponent = SinglePayment;
+          break;
+        }
+        case "Postavke":
+        case "Settings":
+          this.currentComponent = SettingsComponent;
+          break;
+        case "Profil":
+          this.currentComponent = OrganizationComponent;
+          break;
+        default:
+          // Optionally handle unrecognized item names
+          break;
+      }
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      beginAtZero: true,
+      // Optionally close the sidebar
+      this.sidebarOpen = false;
     },
   },
 };
-
-const recentActivity = ref([
-  {
-    id: 1,
-    title: "New campaign created",
-    time: "2 hours ago",
-    icon: "fa-envelope",
-    iconBg: "bg-purple-50",
-    iconColor: "text-purple-600",
-  },
-  {
-    id: 2,
-    title: "Payment received",
-    time: "4 hours ago",
-    icon: "fa-dollar-sign",
-    iconBg: "bg-green-50",
-    iconColor: "text-green-600",
-  },
-  {
-    id: 3,
-    title: "New landing page published",
-    time: "6 hours ago",
-    icon: "fa-laptop",
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-600",
-  },
-]);
-
-const campaigns = ref([
-  {
-    id: 1,
-    name: "Summer Sale",
-    stats: "24.5k emails sent",
-    status: "Active",
-    statusColor: "text-green-600",
-  },
-  {
-    id: 2,
-    name: "Product Launch",
-    stats: "12.8k emails sent",
-    status: "Draft",
-    statusColor: "text-gray-600",
-  },
-  {
-    id: 3,
-    name: "Newsletter",
-    stats: "8.2k emails sent",
-    status: "Scheduled",
-    statusColor: "text-blue-600",
-  },
-]);
 </script>

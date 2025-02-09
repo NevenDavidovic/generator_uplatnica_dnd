@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-indigo-600 min-h-screen px-4 md:px-8">
+  <div class="bg-primary min-h-screen px-4 md:px-8">
     <!-- Hero Section -->
     <div
       class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center py-8 md:py-16 gap-8"
@@ -11,16 +11,16 @@
         <h1
           class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
         >
-          The only AI CRM for small businesses
+          Generator Uplatnica Društava "Naša Djeca"
         </h1>
         <p class="text-xl text-white/90 mb-8">
-          Respond to leads, organize contacts, and instantly generate client
-          communications with AI CRM
+          Jedinstveni generator opće uplatnice sa svim informacijama.
         </p>
         <button
-          class="bg-white text-indigo-600 px-6 py-3 rounded-md font-medium text-lg hover:bg-white/90 transition-colors duration-200"
+          @click="$router.push('/trial')"
+          class="bg-white text-primary px-6 py-3 rounded-md font-medium text-lg hover:bg-white/90 transition-colors duration-200"
         >
-          Start For Free
+          Isprobaj
         </button>
       </div>
 

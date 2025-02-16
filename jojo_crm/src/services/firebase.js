@@ -19,14 +19,15 @@ import { getAnalytics } from "firebase/analytics";
 const googleProvider = new GoogleAuthProvider();
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDk_m3kDksQwNZ0igpTSKNFnb-1lKt3jco",
-  authDomain: "crm-small-bussines.firebaseapp.com",
-  projectId: "crm-small-bussines",
-  storageBucket: "crm-small-bussines.firebasestorage.app",
-  messagingSenderId: "778722590552",
-  appId: "1:778722590552:web:de1d4055161a6d8922ef2d",
-  measurementId: "G-FRD57BKB3L",
+  apiKey: import.meta.env.VUE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VUE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VUE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VUE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VUE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VUE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VUE_FIREBASE_MEASUREMENT_ID,
 };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

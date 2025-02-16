@@ -1,3 +1,4 @@
+![image](https://github.com/user-attachments/assets/c2c17f95-95a6-425e-8ed3-33402700e5d0)
 
 # Generator Uplatnica za Društvo "Naša Djeca" Poreč
 Napravljena za lakše baratanje članarinama i vođenje evidencije o polaznicima.

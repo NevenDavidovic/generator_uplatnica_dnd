@@ -3,7 +3,7 @@
 Napravljena za lakše baratanje članarinama i vođenje evidencije o polaznicima.
 Uz Electron prebačena u desktop aplikaciju koja koristi vanjske servise
 
-##Tehnologije
+## Tehnologije
 - Firebase
 - Supabase
 - EmailJS

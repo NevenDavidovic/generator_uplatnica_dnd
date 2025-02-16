@@ -2,7 +2,8 @@
 
 # Generator Uplatnica za Društvo "Naša Djeca" Poreč
 Napravljena za lakše baratanje članarinama i vođenje evidencije o polaznicima.
-Uz Electron prebačena u desktop aplikaciju koja koristi vanjske servise
+Uz Electron prebačena u desktop aplikaciju koja koristi vanjske servise.
+Originalna ideja je bila da bude crm za male organizacije nazvan jojo CRM.
 
 ## Tehnologije
 - Vue.js

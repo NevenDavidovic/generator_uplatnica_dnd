@@ -1,4 +1,3 @@
-# jojo_crm
 
 ## Project setup
 ```

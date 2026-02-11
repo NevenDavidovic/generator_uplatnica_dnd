@@ -16,12 +16,12 @@
         <p class="text-xl text-white/90 mb-8">
           Jedinstveni generator opće uplatnice sa svim informacijama.
         </p>
-        <button
+        <!-- <button
           @click="$router.push('/trial')"
           class="bg-white text-primary px-6 py-3 rounded-md font-medium text-lg hover:bg-white/90 transition-colors duration-200"
         >
           Isprobaj
-        </button>
+        </button> -->
       </div>
 
       <!-- Hero Image -->

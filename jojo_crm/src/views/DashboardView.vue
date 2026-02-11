@@ -330,7 +330,7 @@ export default {
           icon: FolderIcon,
           current: false,
         },
-        { name: "Uplatnice", href: "#", icon: CalendarIcon, current: false },
+        
         {
           name: "Radionice",
           href: "#",
@@ -365,10 +365,7 @@ export default {
           this.currentComponent = StatisticsComponent;
           break;
         }
-        case "Uplatnice": {
-          this.currentComponent = AllSlips;
-          break;
-        }
+        
         case "Nadzorna ploča": {
           this.currentComponent = DashboardComponent;
           break;

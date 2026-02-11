@@ -18,62 +18,19 @@
       </div>
     </div>
 
-    <!-- Transactions Table -->
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h3 class="text-xl font-semibold mb-4">📋 Zadnje transakcije</h3>
+   
 
-      <div v-if="statisticsStore.loading" class="text-center">
-        Učitavanje podataka...
-      </div>
-
-      <table v-else class="w-full border-collapse border border-gray-200">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-4 py-2">Datum</th>
-            <th class="border border-gray-300 px-4 py-2">Ime i Prezime</th>
-            <th class="border border-gray-300 px-4 py-2">Iznos (€)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="txn in statisticsStore.transactions.slice(0, 10)"
-            :key="txn.id"
-            class="border-t"
-          >
-            <td class="border border-gray-300 px-4 py-2">
-              {{ formatDate(txn.created_at) }}
-            </td>
-            <td class="border border-gray-300 px-4 py-2">
-              {{ txn.ime_prezime }}
-            </td>
-            <td
-              class="border border-gray-300 px-4 py-2 text-green-600 font-bold"
-            >
-              {{ txn.iznos }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Transactions Chart -->
-    <div class="mt-8 bg-white p-6 rounded-lg shadow-lg">
-      <h3 class="text-xl font-semibold mb-4">📈 Mjesečne Uplate</h3>
-      <div v-if="statisticsStore.loading" class="text-center">
-        Učitavanje grafikona...
-      </div>
-      <BarChart v-else :data="chartData" />
-    </div>
+    
   </div>
 </template>
 
 <script>
 import { useStatisticsStore } from "@/store/statisticsStore";
 import { useOrganizationStore } from "@/store/organizationStore";
-import BarChart from "@/components/BarChart.vue";
+
 
 export default {
-  components: { BarChart },
+  
   setup() {
     const statisticsStore = useStatisticsStore();
     const organizationStore = useOrganizationStore();

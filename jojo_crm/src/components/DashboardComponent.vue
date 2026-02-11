@@ -32,23 +32,7 @@
       />
     </div>
     <!-- Recent Activity Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <DataTable
-        title="📋 Zadnje Transakcije"
-        :data="statisticsStore.transactions.slice(0, 5)"
-        :loading="statisticsStore.loading"
-        :columns="['Datum', 'Ime i Prezime', 'Iznos (€)']"
-        :fields="['created_at', 'ime_prezime', 'iznos']"
-      />
-
-      <DataTable
-        title="📇 Zadnji Kontakti"
-        :data="primateljiStore.primatelji.slice(0, 5)"
-        :loading="primateljiStore.loading"
-        :columns="['Ime i Prezime', 'Email']"
-        :fields="['ime_prezime', 'e_mail']"
-      />
-    </div>
+    
   </div>
 </template>
 
@@ -58,11 +42,11 @@ import { usePrimateljiStore } from "@/store/primateljiStore";
 import { useOrganizationStore } from "@/store/organizationStore";
 import { ref, watchEffect } from "vue";
 import StatCard from "@/components/pageElements/StatCard.vue";
-import DataTable from "@/components/pageElements/DataTable.vue";
+
 import ChartCard from "@/components/pageElements/ChartCard.vue";
 
 export default {
-  components: { StatCard, DataTable, ChartCard },
+  components: { StatCard,  ChartCard },
   setup() {
     const statisticsStore = useStatisticsStore();
     const primateljiStore = usePrimateljiStore();

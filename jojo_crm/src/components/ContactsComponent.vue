@@ -120,7 +120,7 @@
                 {{ contact.postalCode }} {{ contact.city }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">{{ contact.email }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ contact.amount }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">{{ formatAmount(contact.amount) }}</td>
               <td class="px-6 py-4 whitespace-nowrap text-center">
                 <button
                   @click="generateBarcode(contact)"
@@ -439,6 +439,7 @@ import emailjs from "emailjs-com";
 emailjs.init(process.env.VUE_APP_EMAILJS_PUBLIC_KEY);
 import { useRadionicaStore } from "@/store/radionicaStore";
 import { onMounted } from "vue";
+import { usePostavkeStore } from "@/store/postavkeStore";
 
 export default {
   setup() {
@@ -488,6 +489,9 @@ export default {
     },
     error() {
       return this.primateljiStore.error?.message || null;
+    },
+    postavkeStore() {
+      return usePostavkeStore();
     },
     sortedContacts() {
       return [...this.filteredContacts].sort((a, b) => {
@@ -547,13 +551,14 @@ export default {
   created() {
     // Initialize store references
     this.primateljiStore = usePrimateljiStore();
-
+    this.postavkeStore = usePostavkeStore();
     this.organizationStore = useOrganizationStore();
 
     // On component create, fetch data for the current organization
     const orgId = this.organizationStore.organization?.id;
     if (orgId) {
       this.primateljiStore.fetchPrimatelji(orgId);
+      this.postavkeStore.fetchEmailSettings(orgId);
     } else {
       alert("No organization ID found. Cannot fetch contacts.");
     }
@@ -568,6 +573,10 @@ export default {
         this.sortOrder = "asc";
       }
     },
+
+    formatAmount(amount) {
+    return parseFloat(amount).toFixed(2);
+  },
 
     toggleSelectAll(event) {
       if (event.target.checked) {
@@ -800,81 +809,76 @@ export default {
         this.selectedContacts = [];
       }
     },
+    
+      async sendSelectedPaymentSlips() {
+  if (this.selectedContacts.length === 0) {
+    alert("Nema odabranih kontakata za slanje.");
+    return;
+  }
 
-    async sendSelectedPaymentSlips() {
-      if (this.selectedContacts.length === 0) {
-        alert("Nema odabranih kontakata za slanje.");
-        return;
+  if (
+    confirm(
+      `Jeste li sigurni da želite poslati ${this.selectedContacts.length} uplatnica?`
+    )
+  ) {
+    this.sending = true;
+
+    // EmailJS credentials
+    const serviceID = process.env.VUE_APP_EMAILJS_SERVICE_ID;
+    const templateID = process.env.VUE_APP_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.VUE_APP_EMAILJS_PUBLIC_KEY;
+    const baseUrl = process.env.VUE_APP_BASE_URL || "http://localhost:8080";
+
+    try {
+      for (const contactId of this.selectedContacts) {
+        const contact = this.contacts.find((c) => c.id === contactId);
+        if (!contact) continue;
+
+        // Generate dynamic link
+        const queryParams = new URLSearchParams({
+          iznosTransakcije: contact.amount,
+          imePlatitelja: contact.name,
+          adresaPlatitelja: contact.address,
+          postanskiBrojIMjestoPlatitelja: `${contact.postalCode} ${contact.city}`,
+          opisPlacanja: contact.paymentDescription,
+        }).toString();
+
+        const dynamicLink = `${baseUrl}/?${queryParams}`;
+
+        // Define the email parameters
+        const templateParams = {
+          subject: this.postavkeStore.emailSettings.subject,  // ✅ Changed from hardcoded
+          message_to_receiver: this.postavkeStore.emailSettings.message,  // ✅ Changed from hardcoded
+          from_name: this.organizationStore.organization.naziv,
+          imePrimatelja: this.organizationStore.organization.naziv,
+          adresaPrimatelja: this.organizationStore.organization.ulica,
+          postanskiBrojIMjestoPrimatelja: this.organizationStore.organization.grad,
+          ibanPrimatelja: this.organizationStore.organization.IBAN,
+          imePlatitelja: contact.name,
+          adresaPlatitelja: contact.address,
+          postanskiBrojIMjestoPlatitelja: `${contact.postalCode} ${contact.city}`,
+          sifraNamjene: "Uplata",
+          modelPlacanja: contact.paymentModel,
+          pozivNaBroj: contact.recipientReference,
+          opisPlacanja: contact.paymentDescription,
+          iznosTransakcije: contact.amount,
+          link_to_slip: dynamicLink,
+          to_email: contact.email,
+        };
+
+        // Send the email
+        await emailjs.send(serviceID, templateID, templateParams, publicKey);
       }
 
-      if (
-        confirm(
-          `Jeste li sigurni da želite poslati ${this.selectedContacts.length} uplatnica?`
-        )
-      ) {
-        this.sending = true;
-
-        // EmailJS credentials
-        const serviceID = process.env.VUE_APP_EMAILJS_SERVICE_ID;
-        const templateID = process.env.VUE_APP_EMAILJS_TEMPLATE_ID;
-        const publicKey = process.env.VUE_APP_EMAILJS_PUBLIC_KEY;
-        const baseUrl = process.env.VUE_APP_BASE_URL || "http://localhost:8080"; // Default base URL
-
-        try {
-          for (const contactId of this.selectedContacts) {
-            const contact = this.contacts.find((c) => c.id === contactId);
-            if (!contact) continue;
-
-            // Generate dynamic link
-            const queryParams = new URLSearchParams({
-              iznosTransakcije: contact.amount,
-              imePlatitelja: contact.name,
-              adresaPlatitelja: contact.address,
-              postanskiBrojIMjestoPlatitelja: `${contact.postalCode} ${contact.city}`,
-              opisPlacanja: contact.paymentDescription,
-            }).toString();
-
-            const dynamicLink = `${baseUrl}/preview?${queryParams}`;
-
-            // Define the email parameters
-            const templateParams = {
-              subject: this.organization.naziv + " - Uplatnica",
-              message_to_receiver: `Poštovani, \n\nU privitku se nalazi vaša uplatnica.\n\nHvala.`,
-              from_name: this.organization.naziv,
-              imePrimatelja: this.organization.naziv,
-              adresaPrimatelja: this.organization.ulica,
-              postanskiBrojIMjestoPrimatelja: this.organization.grad,
-              ibanPrimatelja: this.organization.IBAN,
-              imePlatitelja: contact.name,
-              adresaPlatitelja: contact.address,
-              postanskiBrojIMjestoPlatitelja: `${contact.postalCode} ${contact.city}`,
-              sifraNamjene: "Uplata",
-              modelPlacanja: contact.paymentModel,
-              pozivNaBroj: contact.recipientReference,
-              opisPlacanja: contact.paymentDescription,
-              iznosTransakcije: contact.amount,
-              link_to_slip: dynamicLink,
-              to_email: contact.email,
-            };
-
-            // Send the email
-            await emailjs.send(
-              serviceID,
-              templateID,
-              templateParams,
-              publicKey
-            );
-          }
-
-          alert("Uplatnice su uspješno poslane!");
-        } catch (error) {
-          console.error("Greška pri slanju e-mailova:", error);
-          alert("Došlo je do greške. Pokušajte ponovno.");
-        } finally {
-          this.sending = false;
-        }
-      }
-    },
+      alert("Uplatnice su uspješno poslane!");
+    } catch (error) {
+      console.error("Greška pri slanju e-mailova:", error);
+      alert("Došlo je do greške. Pokušajte ponovno.");
+    } finally {
+      this.sending = false;
+    }
+  }
+},
 
     goToPaymentSlip(contact) {
       // "Generator Uplatnice" is the itemName you use in the parent’s switch

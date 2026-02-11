@@ -15,17 +15,21 @@ import {
 } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
-
+console.log('Environment check:', {
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  allEnv: process.env
+}); 
 const googleProvider = new GoogleAuthProvider();
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VUE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VUE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VUE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VUE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VUE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VUE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VUE_FIREBASE_MEASUREMENT_ID,
+  apiKey: process.env.VUE_APP_FIREBASE_API_KEY,
+  authDomain: process.env.VUE_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.VUE_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.VUE_APP_FIREBASE_APP_ID,
+  measurementId: process.env.VUE_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 

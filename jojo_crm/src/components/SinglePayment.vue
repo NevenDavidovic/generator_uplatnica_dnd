@@ -662,7 +662,7 @@ export default {
           opisPlacanja: this.paymentParams.opisPlacanja,
         }).toString();
 
-        const dynamicLink = `${baseUrl}/preview?${queryParams}`;
+        const dynamicLink = `${baseUrl}/?${queryParams}`;
 
         // Define the template parameters to match your EmailJS template placeholders
         const templateParams = {

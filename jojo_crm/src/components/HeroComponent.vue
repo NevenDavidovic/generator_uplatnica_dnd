@@ -11,7 +11,7 @@
         <h1
           class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
         >
-          Generator Uplatnica Društava "Naša Djeca"
+          Generator Uplatnica
         </h1>
         <p class="text-xl text-white/90 mb-8">
           Jedinstveni generator opće uplatnice sa svim informacijama.

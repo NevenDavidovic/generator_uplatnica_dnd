@@ -19,7 +19,7 @@
       <!-- Right Section -->
       <div class="flex items-center gap-4">
         <router-link
-          class="bg-white text-primary px-4 py-2 rounded-md font-medium hover:bg-white/90 transition-colors"
+          class="bg-white text-white px-4 py-2 rounded-md font-medium hover:bg-white/90 transition-colors"
           to="/signin"
           >Prijava</router-link
         >

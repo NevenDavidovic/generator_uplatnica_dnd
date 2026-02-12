@@ -668,10 +668,7 @@ export default {
               mainPart.querySelector("postanskiBroj")?.textContent || "00000",
             grad: mainPart.querySelector("platiteljMjesto")?.textContent || "",
             e_mail: mainPart.querySelector("emailAdresa")?.textContent || "",
-            iznos: parseFloat(
-              mainPart.querySelector("iznos")?.textContent.replace(",", ".") ||
-                0
-            ),
+            iznos: mainPart.querySelector("iznos")?.textContent.replace(",", ".") || "0.00",
             poziv_na_primatelja:
               mainPart.querySelector("pozivNaBrojPrimatelja")?.textContent ||
               "",
@@ -990,9 +987,7 @@ export default {
                 .slice(1)
                 .join(" ") || "",
             e_mail: values[headers.indexOf("emailadresa")] || "",
-            iznos: parseFloat(
-              values[headers.indexOf("iznos")].replace(",", ".") || 0
-            ),
+            iznos: values[headers.indexOf("iznos")].replace(",", ".") || "0.00",
             poziv_na_primatelja:
               values[headers.indexOf("pozivnabrojprimatelja")] || "",
             opis_placanja: values[headers.indexOf("opisplacanja")] || "",

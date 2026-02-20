@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nalozi>
+  <rowNalog>
+    <mainPartNalog>
+      <platiteljNaziv>Ivan Horvat</platiteljNaziv>
+      <platiteljAdresa>Ilica 10</platiteljAdresa>
+      <postanskiBroj>10000</postanskiBroj>
+      <platiteljMjesto>Zagreb</platiteljMjesto>
+      <emailAdresa>ivan.horvat@gmail.com</emailAdresa>
+      <iznos>150,00</iznos>
+      <pozivNaBrojPrimatelja>HR00-123456-7891234567</pozivNaBrojPrimatelja>
+      <opisPlacanja>Uplata članarine</opisPlacanja>
+    </mainPartNalog>
+  </rowNalog>
+
+  <rowNalog>
+    <mainPartNalog>
+      <platiteljNaziv>Marija Kovač</platiteljNaziv>
+      <platiteljAdresa>Knežija 5</platiteljAdresa>
+      <postanskiBroj>21000</postanskiBroj>
+      <platiteljMjesto>Split</platiteljMjesto>
+      <emailAdresa>marija.kovac@gmail.com</emailAdresa>
+      <iznos>75,50</iznos>
+      <pozivNaBrojPrimatelja>HR00-987654-3210987654</pozivNaBrojPrimatelja>
+      <opisPlacanja>Uplata za uslugu</opisPlacanja>
+    </mainPartNalog>
+  </rowNalog>
+
+  <rowNalog>
+    <mainPartNalog>
+      <platiteljNaziv>Tomislav Perić</platiteljNaziv>
+      <platiteljAdresa>Vukovarska 22</platiteljAdresa>
+      <postanskiBroj>51000</postanskiBroj>
+      <platiteljMjesto>Rijeka</platiteljMjesto>
+      <emailAdresa>tomislav.peric@yahoo.com</emailAdresa>
+      <iznos>200,00</iznos>
+      <pozivNaBrojPrimatelja>HR00-112233-4455667788</pozivNaBrojPrimatelja>
+      <opisPlacanja>Godišnja pretplata</opisPlacanja>
+    </mainPartNalog>
+  </rowNalog>
+
+  <rowNalog>
+    <mainPartNalog>
+      <platiteljNaziv>Ana Novak</platiteljNaziv>
+      <platiteljAdresa>Gajeva 3</platiteljAdresa>
+      <postanskiBroj>31000</postanskiBroj>
+      <platiteljMjesto>Osijek</platiteljMjesto>
+      <emailAdresa>ana.novak@hotmail.com</emailAdresa>
+      <iznos>50,00</iznos>
+      <pozivNaBrojPrimatelja></pozivNaBrojPrimatelja>
+      <opisPlacanja></opisPlacanja>
+    </mainPartNalog>
+  </rowNalog>
+</nalozi>

@@ -25,11 +25,7 @@
         :chartData="cityChartData"
       />
 
-      <ChartCard
-        v-if="radionicaChartData"
-        title="🎨 Broj Primatelja po Radionicama"
-        :chartData="radionicaChartData"
-      />
+      
     </div>
     <!-- Recent Activity Section -->
     

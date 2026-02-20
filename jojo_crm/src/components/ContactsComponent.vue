@@ -114,14 +114,14 @@
                   v-model="selectedContacts"
                 />
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ contact.name }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-left">{{ contact.name }}</td>
 
-              <td class="px-6 py-4 whitespace-nowrap">
+              <td class="px-6 py-4 whitespace-nowrap text-left">
                 {{ contact.postalCode }} {{ contact.city }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ contact.email }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ formatAmount(contact.amount) }}</td>
-              <td class="px-6 py-4 whitespace-nowrap text-center">
+              <td class="px-6 py-4 whitespace-nowrap text-left">{{ contact.email }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-left">{{ contact.amount }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-left">
                 <button
                   @click="generateBarcode(contact)"
                   class="text-blue-600 hover:text-blue-900 mx-2"
@@ -227,15 +227,18 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >Poštanski broj</label
-                >
-                <input
-                  v-model="form.postalCode"
-                  type="text"
-                  class="block w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+  <label class="block text-sm font-medium text-gray-700 mb-1">Poštanski broj</label>
+  <input
+    v-model="form.postalCode"
+    type="text"
+    inputmode="numeric"
+    maxlength="5"
+    class="block w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': postalCodeError }"
+    @keypress="(e) => !/\d/.test(e.key) && e.preventDefault()"
+  />
+  <p v-if="postalCodeError" class="mt-1 text-sm text-red-500">{{ postalCodeError }}</p>
+</div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1"
                   >Grad</label
@@ -257,15 +260,16 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
-                  >Iznos</label
-                >
-                <input
-                  v-model="form.amount"
-                  type="number"
-                  class="block w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
+  <label class="block text-sm font-medium text-gray-700 mb-1">Iznos</label>
+  <input
+    :value="displayAmount"
+    type="text"
+    inputmode="numeric"
+    class="block w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    @keypress="(e) => !/\d/.test(e.key) && e.preventDefault()"
+    @input="handleAmountInput"
+  />
+</div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1"
                   >Model Plaćanja</label
@@ -319,17 +323,31 @@
 
           <!-- Bulk Entry Forms (CSV / XML) - Implementation is up to you -->
           <div v-else-if="entryType === 'csv'" class="space-y-4">
+
+             <div class="flex items-center gap-2 text-sm text-gray-600">
+    <span>Primjer CSV datoteke:</span>
+    
+     <a href="/example.csv"
+      download="example.csv"
+      class="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+    >
+      <i class="fas fa-download"></i>
+      Preuzmi primjer
+    </a>
+  </div>
             <div>
               <label class="block text-sm font-medium text-gray-700"
                 >Učitaj .csv datoteku</label
-              >
+              > 
               <input
                 @change="uploadCSV"
                 type="file"
                 accept=".csv"
                 class="mt-1 block w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-            </div>
+            </div>¸
+
+            
 
             <!-- Successfully Added Contacts -->
             <div v-if="csvContacts.length">
@@ -358,6 +376,18 @@
           </div>
 
           <div v-else-if="entryType === 'xml'" class="space-y-4">
+
+            <div class="flex items-center gap-2 text-sm text-gray-600">
+    <span>Primjer XML datoteke:</span>
+    
+     <a href="/example.xml"
+      download="example.xml"
+      class="text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+    >
+      <i class="fas fa-download"></i>
+      Preuzmi primjer
+    </a>
+  </div>
             <div>
               <label class="block text-sm font-medium text-gray-700"
                 >Učitaj .xml datoteku</label
@@ -493,6 +523,19 @@ export default {
     postavkeStore() {
       return usePostavkeStore();
     },
+    displayAmount() {
+    if (!this.form.amount) return ''
+    const digits = String(this.form.amount).replace(/\D/g, '')
+    if (!digits) return ''
+    return (parseInt(digits, 10) / 100).toFixed(2)
+  },
+  postalCodeError() {
+    if (!this.form.postalCode) return ''
+    if (!/^\d{5}$/.test(this.form.postalCode)) return 'Poštanski broj mora imati točno 5 znamenki.'
+    const code = parseInt(this.form.postalCode, 10)
+    if (code < 10000 || code > 53296) return 'Poštanski broj nije u važećem rasponu (10000 - 53296).'
+    return ''
+  },
     sortedContacts() {
       return [...this.filteredContacts].sort((a, b) => {
         if (!this.sortKey) return 0;
@@ -574,9 +617,12 @@ export default {
       }
     },
 
-    formatAmount(amount) {
-    return parseFloat(amount).toFixed(2);
+    handleAmountInput(e) {
+    const digits = e.target.value.replace(/\D/g, '')
+    this.form.amount = digits ? (parseInt(digits, 10) / 100).toFixed(2) : ''
   },
+
+    
 
     toggleSelectAll(event) {
       if (event.target.checked) {

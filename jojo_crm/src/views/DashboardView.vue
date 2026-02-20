@@ -3,7 +3,6 @@
     <!-- Mobile Sidebar -->
     <TransitionRoot as="template" :show="sidebarOpen">
       <Dialog class="relative z-50 lg:hidden" @close="sidebarOpen = false">
-        <!-- (TransitionChild and other mobile sidebar code remains unchanged) -->
         <div class="fixed inset-0 flex">
           <TransitionChild
             as="template"
@@ -15,7 +14,6 @@
             leave-to="-translate-x-full"
           >
             <DialogPanel class="relative mr-16 flex w-full max-w-xs flex-1">
-              <!-- Close button etc. -->
               <div
                 class="flex grow flex-col gap-y-5 overflow-y-auto bg-primary px-6 pb-4"
               >
@@ -57,7 +55,6 @@
                       </ul>
                     </li>
 
-                    <!-- Postavke / Settings link -->
                     <li class="mt-auto">
                       <a
                         href="#"
@@ -125,7 +122,6 @@
               </ul>
             </li>
 
-            <!-- Postavke / Settings link -->
             <li class="mt-auto">
               <a
                 href="#"
@@ -252,6 +248,7 @@ import StatisticsComponent from "@/components/StatisticsComponent.vue";
 import DashboardComponent from "@/components/DashboardComponent.vue";
 import RadioniceComponent from "@/components/RadioniceComponent.vue";
 import AllSlips from "@/components/AllSlips.vue";
+import QRGenerator from "@/components/QRGenerator.vue";
 import { useAuthStore } from "@/store/auth";
 import { ref } from "vue";
 import { usePaymentSlipStore } from "@/store/paymentSlipStore";
@@ -277,13 +274,13 @@ import {
   HomeIcon,
   UsersIcon,
   XMarkIcon,
+  QrCodeIcon,
 } from "@heroicons/vue/24/outline";
 import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/vue/20/solid";
 
 export default {
   name: "DashboardView",
   setup() {
-    // This makes the entire component definition reactive
     const comp = ref(ContactsComponent);
     return { comp };
   },
@@ -295,6 +292,8 @@ export default {
     AllSlips,
     OrganizationComponent,
     DashboardComponent,
+    RadioniceComponent,
+    QRGenerator,
     Dialog,
     DialogPanel,
     Menu,
@@ -313,13 +312,13 @@ export default {
     HomeIcon,
     UsersIcon,
     XMarkIcon,
+    QrCodeIcon,
     ChevronDownIcon,
     MagnifyingGlassIcon,
   },
   data() {
     return {
       sidebarOpen: false,
-
       currentComponent: DashboardComponent,
       navigation: [
         { name: "Nadzorna ploča", href: "#", icon: HomeIcon, current: true },
@@ -330,14 +329,18 @@ export default {
           icon: FolderIcon,
           current: false,
         },
-        
         {
           name: "Radionice",
           href: "#",
           icon: DocumentDuplicateIcon,
           current: false,
         },
-
+        {
+          name: "Generator QR Koda",
+          href: "#",
+          icon: QrCodeIcon,
+          current: false,
+        },
         { name: "Izvještaji", href: "#", icon: ChartPieIcon, current: false },
       ],
       userNavigation: [
@@ -354,6 +357,9 @@ export default {
   },
   methods: {
     navigate(itemName, contact = null) {
+      // Reset all current flags
+      this.navigation.forEach((item) => (item.current = false));
+
       switch (itemName) {
         case "Odjava": {
           const authStore = useAuthStore();
@@ -365,7 +371,6 @@ export default {
           this.currentComponent = StatisticsComponent;
           break;
         }
-        
         case "Nadzorna ploča": {
           this.currentComponent = DashboardComponent;
           break;
@@ -378,13 +383,15 @@ export default {
           this.currentComponent = RadioniceComponent;
           break;
         }
+        case "Generator QR Koda": {
+          this.currentComponent = QRGenerator;
+          break;
+        }
         case "Generator Uplatnice": {
-          // If the child passed a contact, set it in the Pinia store
           if (contact) {
             const slipStore = usePaymentSlipStore();
             slipStore.setSelectedContact(contact);
           }
-          // Immediately switch to the SinglePayment component
           this.currentComponent = SinglePayment;
           break;
         }
@@ -396,11 +403,13 @@ export default {
           this.currentComponent = OrganizationComponent;
           break;
         default:
-          // Optionally handle unrecognized item names
           break;
       }
 
-      // Optionally close the sidebar
+      // Set current flag for active nav item
+      const activeItem = this.navigation.find((item) => item.name === itemName);
+      if (activeItem) activeItem.current = true;
+
       this.sidebarOpen = false;
     },
   },

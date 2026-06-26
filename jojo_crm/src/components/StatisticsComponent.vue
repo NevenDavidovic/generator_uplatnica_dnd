@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-6xl mx-auto p-6">
-    <h2 class="text-2xl font-bold mb-4">📊 Statistika Transakcija</h2>
+    <h2 class="text-2xl font-bold mb-4">Statistika</h2>
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

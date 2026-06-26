@@ -642,62 +642,77 @@ export default {
 
   methods: {
     // Add the email sending method
-    async sendEmail() {
-      this.sending = true;
+   async sendEmail() {
+  // Guard: check email exists
+  if (!this.paymentParams.email) {
+    alert('No recipient email address. Please select a contact with an email.')
+    return
+  }
 
-      // Retrieve EmailJS service credentials from environment variables
-      const serviceID = process.env.VUE_APP_EMAILJS_SERVICE_ID;
-      const templateID = process.env.VUE_APP_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.VUE_APP_EMAILJS_PUBLIC_KEY;
-      const baseUrl = process.env.VUE_APP_BASE_URL || "http://localhost:8080"; // Default base URL
+  // Guard: check email settings loaded
+  if (!this.postavkeStore.emailSettings?.subject) {
+    alert('Email settings not configured. Please set up email settings first.')
+    return
+  }
 
-      try {
-        // Generate dynamic link using paymentParams
-        const queryParams = new URLSearchParams({
-          iznosTransakcije: this.paymentParams.iznosTransakcije,
-          imePlatitelja: this.paymentParams.imePlatitelja,
-          adresaPlatitelja: this.paymentParams.adresaPlatitelja,
-          postanskiBrojIMjestoPlatitelja:
-            this.paymentParams.postanskiBrojIMjestoPlatitelja,
-          opisPlacanja: this.paymentParams.opisPlacanja,
-        }).toString();
+  this.sending = true
 
-        const dynamicLink = `${baseUrl}/?${queryParams}`;
+  const serviceID  = process.env.VUE_APP_EMAILJS_SERVICE_ID
+  const templateID = process.env.VUE_APP_EMAILJS_TEMPLATE_ID
+  const publicKey  = process.env.VUE_APP_EMAILJS_PUBLIC_KEY
+  const baseUrl    = process.env.VUE_APP_BASE_URL || 'http://localhost:8080'
 
-        // Define the template parameters to match your EmailJS template placeholders
-        const templateParams = {
-          subject: this.postavkeStore.emailSettings.subject,
-          message_to_receiver: this.postavkeStore.emailSettings.message,
-          from_name: this.paymentParams.imePrimatelja,
-          imePrimatelja: this.paymentParams.imePrimatelja,
-          adresaPrimatelja: this.paymentParams.adresaPrimatelja,
-          postanskiBrojIMjestoPrimatelja:
-            this.paymentParams.postanskiBrojIMjestoPrimatelja,
-          ibanPrimatelja: this.paymentParams.ibanPrimatelja,
-          imePlatitelja: this.paymentParams.imePlatitelja,
-          adresaPlatitelja: this.paymentParams.adresaPlatitelja,
-          postanskiBrojIMjestoPlatitelja:
-            this.paymentParams.postanskiBrojIMjestoPlatitelja,
-          sifraNamjene: this.paymentParams.sifraNamjene,
-          modelPlacanja: this.paymentParams.modelPlacanja,
-          pozivNaBroj: this.paymentParams.pozivNaBroj,
-          opisPlacanja: this.paymentParams.opisPlacanja,
-          iznosTransakcije: this.paymentParams.iznosTransakcije,
-          link_to_slip: dynamicLink,
-          to_email: this.paymentParams.email,
-        };
+  try {
+    const queryParams = new URLSearchParams({
+      iznosTransakcije:              this.paymentParams.iznosTransakcije,
+      imePlatitelja:                 this.paymentParams.imePlatitelja,
+      adresaPlatitelja:              this.paymentParams.adresaPlatitelja,
+      postanskiBrojIMjestoPlatitelja: this.paymentParams.postanskiBrojIMjestoPlatitelja,
+      opisPlacanja:                  this.paymentParams.opisPlacanja,
+    }).toString()
 
-        // Send the email using EmailJS
-        await emailjs.send(serviceID, templateID, templateParams, publicKey);
+    const dynamicLink = `${baseUrl}/?${queryParams}`
 
-        alert("Email sent successfully!");
-      } catch (error) {
-        console.error("Error sending email:", error);
-        alert("Failed to send email. Please try again.");
-      } finally {
-        this.sending = false;
-      }
-    },
+    const templateParams = {
+      subject:                        this.postavkeStore.emailSettings.subject,
+      message_to_receiver:            this.postavkeStore.emailSettings.message,
+      from_name:                      this.paymentParams.imePrimatelja,
+      imePrimatelja:                  this.paymentParams.imePrimatelja,
+      adresaPrimatelja:               this.paymentParams.adresaPrimatelja,
+      postanskiBrojIMjestoPrimatelja: this.paymentParams.postanskiBrojIMjestoPrimatelja,
+      ibanPrimatelja:                 this.paymentParams.ibanPrimatelja,
+      imePlatitelja:                  this.paymentParams.imePlatitelja,
+      adresaPlatitelja:               this.paymentParams.adresaPlatitelja,
+      postanskiBrojIMjestoPlatitelja: this.paymentParams.postanskiBrojIMjestoPlatitelja,
+      sifraNamjene:                   this.paymentParams.sifraNamjene,
+      modelPlacanja:                  this.paymentParams.modelPlacanja,
+      pozivNaBroj:                    this.paymentParams.pozivNaBroj,
+      opisPlacanja:                   this.paymentParams.opisPlacanja,
+      iznosTransakcije:               this.paymentParams.iznosTransakcije,
+      link_to_slip:                   dynamicLink,
+      to_email:                       this.paymentParams.email,
+    }
+
+    await emailjs.send(serviceID, templateID, templateParams, publicKey)
+    alert('Email sent successfully!')
+
+  } catch (error) {
+    console.error('EmailJS error:', error)
+
+    // Give a more specific error message based on what failed
+    if (!serviceID || !templateID || !publicKey) {
+      alert('EmailJS credentials are missing. Check your .env file.')
+    } else if (error?.status === 400) {
+      alert('Email template error. Check your EmailJS template variables.')
+    } else if (error?.status === 401) {
+      alert('EmailJS authentication failed. Check your public key.')
+    } else {
+      alert('Failed to send email. Please try again.')
+    }
+  } finally {
+    this.sending = false
+  }
+},
     resetForm() {
       this.paymentParams = {
         imePlatitelja: "",
@@ -955,5 +970,29 @@ export default {
 .func-buttons {
   display: flex;
   justify-content: center;
+}
+
+.uplatnica-form-img input:focus,
+.uplatnica-form-img textarea:focus,
+.uplatnica-form-img select:focus {
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.uplatnica-form-img input,
+.uplatnica-form-img textarea,
+.uplatnica-form-img select {
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.input-field {
+  background: transparent !important;
+  border: 0 !important;
+  outline: none !important;
+  font-size: 12px;
+  height: 20px;
 }
 </style>

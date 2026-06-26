@@ -1,51 +1,36 @@
 import { defineStore } from "pinia";
-import supabase from "@/config_db/supabase";
+
+const LS_KEY = "jojo_organizacija";
+const DEFAULT_ORG = {
+  id: 1,
+  naziv: "Društvo „Naša djeca“ Poreč",
+  ulica: "Trg kneza Branimira 2",
+  grad: "Poreč",
+  email: "",
+  IBAN: "HR5823800061110007659",
+  slika: "",
+};
+
+function load() {
+  const stored = localStorage.getItem(LS_KEY);
+  return stored ? JSON.parse(stored) : { ...DEFAULT_ORG };
+}
 
 export const useOrganizationStore = defineStore("organization", {
   state: () => ({
-    organization: null,
+    organization: load(),
     loading: false,
     error: null,
   }),
   actions: {
-    async fetchOrganization(organizationId) {
-      if (!organizationId) {
-        this.error = { message: "No organization id provided" };
-        return;
-      }
-      this.loading = true;
-
-      const { data, error } = await supabase
-        .from("organizacija")
-        .select("*")
-        .eq("id", organizationId)
-        .maybeSingle();
-
-      if (error) {
-        alert("Error fetching organizacija:", error);
-        this.error = error;
-      } else {
-        this.organization = data;
-      }
-      this.loading = false;
+    fetchOrganization() {
+      this.organization = load();
     },
 
     async updateOrganization(updatedOrg) {
       this.loading = true;
-      // Using current organization's id for update
-      const organizationId = Number(this.organization?.id);
-
-      const { data, error } = await supabase
-        .from("organizacija") // Make sure the table name is correct
-        .update(updatedOrg)
-        .eq("id", organizationId)
-        .select(); // or select("*") if you want all columns
-
-      if (error) {
-        this.error = error;
-      } else {
-        this.organization = data?.[0] || null;
-      }
+      this.organization = { ...this.organization, ...updatedOrg };
+      localStorage.setItem(LS_KEY, JSON.stringify(this.organization));
       this.loading = false;
     },
   },

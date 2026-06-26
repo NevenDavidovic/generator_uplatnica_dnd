@@ -121,6 +121,7 @@
       <div v-if="history.length" class="bg-white rounded-lg shadow mt-6 overflow-x-auto">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Povijest generiranja</h2>
+          
           <button @click="clearHistory" class="text-xs text-red-500 hover:text-red-700">Obriši sve</button>
         </div>
         <table class="w-full">
@@ -148,8 +149,14 @@
             </tr>
           </tbody>
         </table>
+        
       </div>
-
+<p class="text-left text-white p-8 mt-[25px]">
+  <strong class="text-white">NAPOMENA:</strong>
+  Povijest se sprema u lokalnu pohranu preglednika (localStorage), što znači da je dostupna isključivo na uređaju i u pregledniku u kojem je kreirana.
+  Ako stranici pristupite s drugog uređaja ili iz drugog preglednika, prethodna povijest neće biti prikazana.
+  Svaki uređaj i preglednik imaju vlastitu, zasebno pohranjenu povijest.
+</p>
     </div>
   </div>
 </template>

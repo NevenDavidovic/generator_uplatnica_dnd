@@ -1,8 +1,7 @@
 <template>
   <div class="max-w-6xl mx-auto p-6">
-    <h2 class="text-3xl font-bold mb-6">📊 Pregled</h2>
+    <h2 class="text-3xl font-bold mb-6">Pregled</h2>
 
-    <!-- Quick Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <StatCard
         title="Ukupno Iznos (€)"
@@ -16,19 +15,27 @@
         bgColor="bg-yellow-100"
         textColor="text-yellow-600"
       />
+      <StatCard
+        title="Ukupno Radionica"
+        :value="statisticsStore.totalRadionica"
+        bgColor="bg-blue-100"
+        textColor="text-blue-600"
+      />
     </div>
-    <!-- Charts Section -->
+
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
       <ChartCard
         v-if="cityChartData"
-        title="📍 Broj Primatelja po Gradovima"
+        title="Broj Primatelja po Gradovima"
         :chartData="cityChartData"
       />
-
-      
+      <ChartCard
+        v-if="radionicaChartData"
+        title="Broj Primatelja po Radionicama"
+        :chartData="radionicaChartData"
+      />
     </div>
-    <!-- Recent Activity Section -->
-    
   </div>
 </template>
 
